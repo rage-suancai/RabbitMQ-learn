@@ -592,12 +592,57 @@ Exchange列表中自动为我们新增了刚刚创建好的虚拟主机相关的
 这里我们直接再配置类中创建一个新的死信交换机和死信队列 并进行绑定:
 
 ```java
-
+                    @Configuration
+                    public class RabbitConfiguration {
+                    
+                        @Bean("directDlExchange")
+                        public Exchange exchange() {
+                            // 创建一个新的死信交换机
+                            return ExchangeBuilder.directExchange("dlx.direct").build();
+                        }
+                    
+                        @Bean("yydsDlQueue") // 创建一个新的死信队列
+                        public Queue dlqueue() {
+                    
+                            return QueueBuilder
+                                    .nonDurable("dl-yyds")
+                                    .build();
+                    
+                        }
+                    
+                        @Bean("dlBinding") // 死信交换机和死信队列进行绑定
+                        public Binding dlBinding(@Qualifier("directDlExchange") Exchange exchange,
+                                                 @Qualifier("yydsDlQueue") Queue queue) {
+                    
+                            return BindingBuilder
+                                    .bind(queue)
+                                    .to(exchange)
+                                    .with("dl-yyds")
+                                    .noargs();
+                    
+                        }
+                    
+                        @Bean("yydsQueue")
+                        public Queue queue() {
+                    
+                            return QueueBuilder
+                                    .nonDurable("yyds")
+                                    .deadLetterExchange("dlx.direct") // 指定死信交换机
+                                    .deadLetterRoutingKey("dl-yyds") // 指定死信Routingkey
+                                    .build();
+                    
+                        }
+                    
+                    }
 ```
 
 接着我们将监听器修改为死信队列监听:
 
+```java
+                    
+```
 
+配置完成后 我们来尝试一下启动一下吧 注意
 
 
 

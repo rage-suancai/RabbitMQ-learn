@@ -8,20 +8,25 @@ import org.springframework.stereotype.Component;
 @Component
 public class TestListener { // SpringBoot连接测试(消费者)
 
-    @RabbitListener(queues = "yyds")
+    /*@RabbitListener(queues = "yyds")
     public void test(Message message) {
         System.out.println(new String(message.getBody()));
-    }
+    }*/
 
-    @RabbitListener(queues = "yyds")
+    /*@RabbitListener(queues = "yyds")
     public String receiver(String data) {
 
         System.out.println("一号消息队列监听器 " + data);
         return "收到";
 
-    }
+    }*/
 
-    @RabbitListener(queues = "yyds", messageConverter = "jacksonConverter")
+    /*@RabbitListener(queues = "yyds", messageConverter = "jacksonConverter")
+    public void receiver(User user) {
+        System.out.println(user);
+    }*/
+
+    @RabbitListener(queues = "dl-yyds", messageConverter = "jacksonConverter")
     public void receiver(User user) {
         System.out.println(user);
     }

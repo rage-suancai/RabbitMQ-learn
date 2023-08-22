@@ -7,11 +7,32 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitConfiguration {
+public class RabbitConfiguration2 {
 
-    @Bean("directExchange")
+    @Bean("directDlExchange")
     public Exchange exchange() {
-        return ExchangeBuilder.directExchange("amp.direct").build();
+        return ExchangeBuilder.directExchange("dlx.direct").build();
+    }
+
+    @Bean("yydsDlQueue")
+    public Queue dlqueue() {
+
+        return QueueBuilder
+                .nonDurable("dl-yyds")
+                .build();
+
+    }
+
+    @Bean("dlBinding")
+    public Binding dlBinding(@Qualifier("directDlExchange") Exchange exchange,
+                             @Qualifier("yydsDlQueue") Queue queue) {
+
+        return BindingBuilder
+                .bind(queue)
+                .to(exchange)
+                .with("dl-yyds")
+                .noargs();
+
     }
 
     @Bean("yydsQueue")
@@ -19,19 +40,9 @@ public class RabbitConfiguration {
 
         return QueueBuilder
                 .nonDurable("yyds")
+                .deadLetterExchange("dlx.direct")
+                .deadLetterRoutingKey("dl-yyds")
                 .build();
-
-    }
-
-    @Bean("binding")
-    public Binding binding(@Qualifier("directExchange") Exchange exchange,
-                           @Qualifier("yydsQueue") Queue queue) {
-
-        return BindingBuilder
-                .bind(queue)
-                .to(exchange)
-                .with("my-yyds")
-                .noargs();
 
     }
 
