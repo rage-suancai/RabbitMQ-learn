@@ -1,13 +1,19 @@
 /*package com.rabbitmq.config;
 
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
+import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.annotation.Resource;
+
 @Configuration
-public class RabbitConfiguration1 {
+public class RabbitConfiguration3 {
+
+    @Resource
+    private CachingConnectionFactory connectionFactory;
 
     @Bean("directExchange")
     public Exchange exchange() {
@@ -34,9 +40,16 @@ public class RabbitConfiguration1 {
 
     }
 
-    @Bean("jacksonConverter")
-    public Jackson2JsonMessageConverter converter() {
-        return new Jackson2JsonMessageConverter();
+    @Bean(name = "listenerContainer")
+    public SimpleRabbitListenerContainerFactory listenerContainer() {
+
+        SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+
+        factory.setConnectionFactory(connectionFactory);
+        factory.setPrefetchCount(1);
+        return factory;
+
     }
 
 }*/
+

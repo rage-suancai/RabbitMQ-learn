@@ -1,4 +1,4 @@
-package com.rabbitmq.config;
+/*package com.rabbitmq.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitConfiguration2 {
 
     @Bean("directDlExchange")
-    public Exchange exchange() {
+    public Exchange dlExchange() {
         return ExchangeBuilder.directExchange("dlx.direct").build();
     }
 
@@ -22,7 +22,6 @@ public class RabbitConfiguration2 {
                 .build();
 
     }
-
     @Bean("dlBinding")
     public Binding dlBinding(@Qualifier("directDlExchange") Exchange exchange,
                              @Qualifier("yydsDlQueue") Queue queue) {
@@ -42,6 +41,8 @@ public class RabbitConfiguration2 {
                 .nonDurable("yyds")
                 .deadLetterExchange("dlx.direct")
                 .deadLetterRoutingKey("dl-yyds")
+                //.ttl(5000)
+                .maxLength(3)
                 .build();
 
     }
@@ -51,4 +52,4 @@ public class RabbitConfiguration2 {
         return new Jackson2JsonMessageConverter();
     }
 
-}
+}*/

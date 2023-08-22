@@ -1,12 +1,11 @@
-package com.rabbitmq.controller;
+package com.rabbitmq.controller.consumer;
 
 import com.rabbitmq.entity.User;
-import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TestListener { // SpringBoot连接测试(消费者)
+public class TestListener1 { // SpringBoot连接测试(生产者消费者)
 
     /*@RabbitListener(queues = "yyds")
     public void test(Message message) {
@@ -26,9 +25,9 @@ public class TestListener { // SpringBoot连接测试(消费者)
         System.out.println(user);
     }*/
 
-    @RabbitListener(queues = "dl-yyds", messageConverter = "jacksonConverter")
+    /*@RabbitListener(queues = "dl-yyds", messageConverter = "jacksonConverter")
     public void receiver(User user) {
         System.out.println(user);
-    }
+    }*/
 
 }

@@ -1,4 +1,4 @@
-package com.rabbitmq.controller;
+package com.rabbitmq.controller.producer;
 
 import com.rabbitmq.entity.User;
 import org.junit.jupiter.api.Test;
