@@ -639,10 +639,22 @@ Exchange列表中自动为我们新增了刚刚创建好的虚拟主机相关的
 接着我们将监听器修改为死信队列监听:
 
 ```java
-                    
+                    @Component
+                    public class TestListener {
+    
+                        @RabbitListener(queues = "dl-yyds", messageConverter = "jacksonConverter")
+                        public void receiver(User user){
+                            System.out.println(user);
+                        }
+                        
+                    }
 ```
 
 配置完成后 我们来尝试一下启动一下吧 注意
+
+
+
+
 
 
 
