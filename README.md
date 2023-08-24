@@ -1,2 +1,2 @@
 # RabbitMQ-learn
-RabbitMQ的学习与练习
+RabbitMQ消息队列的学习与练习
