@@ -256,23 +256,125 @@
 
 <img src="https://image.itbaima.net/markdown/2023/03/08/z45gI7UaKmCipEL.jpg"/>
 
+我们可以使用*或#来表示:
+- *表示任意的一个单词
+- #表示0个或多个单词
 
+这里我们来测试一下:
 
+```java
+                    @Configuration
+                    public class RabbitConfiguration6 {
+                    
+                        @Bean("topicExchange") // 这里使用预置的Topic类型交换机
+                        public Exchange exchange() {
+                            return ExchangeBuilder.topicExchange("amq.topic").build();
+                        }
+                    
+                        @Bean("yydsQueue")
+                        public Queue queue() {
+                            return QueueBuilder.nonDurable("yyds").build();
+                        }
+                    
+                        @Bean("binding")
+                        public Binding binding(@Qualifier("topicExchange") Exchange exchange,
+                                               @Qualifier("yydsQueue") Queue queue) {
+                    
+                            return BindingBuilder
+                                    .bind(queue)
+                                    .to(exchange)
+                                    .with("*.test.*")
+                                    .noargs();
+                    
+                        }
+                    
+                    }
+```
 
+启动项目 可以看到只要是满足通配符条件都可以成功转发到对应的消息队列:
 
+<img src="https://image.itbaima.net/markdown/2023/03/08/aS37QitoUdf4FZ9.jpg"/>
 
+接着我们可以在试试看#通配符
 
+除了我们这里使用的默认主题交换机之外 还有一个叫做amq.rabbitmq.trace的交换机:
 
+<img src="https://image.itbaima.net/markdown/2023/03/08/CWfRIwoYLjQrbpH.jpg"/>
 
+可以看到它也是topic类型的 那么这个交换机是做什么的呢? 实际上这是用于帮助我们记录和追踪生产者和消费者使用消息队列的交换机 它是一个内部的交换机 那么如何使用呢? 首先创建一个消息队列用于接收记录:
 
+<img src="https://image.itbaima.net/markdown/2023/03/08/s7B38pjkd4EGFLI.jpg"/>
 
+接着我们需要在控制台将虚拟主机/test的追踪功能开启:
 
+```shell
+                    sudo rabbitmctl trace_on -p /test
+```
 
+开启后 我们将此队列绑定到上面的交换机上:
 
+<img src="https://image.itbaima.net/markdown/2023/03/08/VsD2dYIpHhbt6R9.jpg"/>
 
+<img src="https://image.itbaima.net/markdown/2023/03/08/EM4WKHqtyz3vLSk.jpg"/>
 
+由于发送到此交换机上的routingkey为publish.交换机名称和deliver.队列名称 分别对应生产者投递到交换机的消息 因此这里使用#通配符进行绑定 现在我们来测试一下 比如还是往yyds队列发送消息:
 
+<img src="https://image.itbaima.net/markdown/2023/03/08/vHKPqJFahV8y7l3.jpg"/>
 
+可以看到在发送消息 并且消费者已经处理之后 trace队列中新增了两条消息 那么我们来看看都是些什么消息:
 
+<img src="https://image.itbaima.net/markdown/2023/03/08/vHKPqJFahV8y7l3.jpg"/>
 
+通过追踪 我们可以很明确地得知消息发送的交换机, routingkey, 用户等信息, 包括信息本身 同样的 消费者在取出数据时也有记录:
 
+<img src="https://image.itbaima.net/markdown/2023/03/08/NApBodythmfjzMV.jpg"/>
+
+我们可以明确消费者的地址, 端口, 具体操作的队列以及取出的消息信息等
+
+到这里 我们就已经了解了三种类型的交换机
+
+### 第四种交换机类型
+通过前面的学习 我们已经介绍了三种交换机类型 现在我们来介绍一下第四种交换机类型header 它是根据头部信息来决定的
+在我们发送的消息中是可以携带一些头部信息的(类似于HTTP) 我们可以根据这些头部信息来决定路由到哪一个消息队列中
+
+```java
+                    @Configuration
+                    public class RabbitConfiguration {
+                    
+                        @Bean("headerExchange") // 注意这里返回的是HeadersExchange
+                        public HeadersExchange exchange(){
+                            
+                            return ExchangeBuilder
+                                    .headersExchange("amq.headers") // RabbitMQ为我们预置了两个 这里用第一个就行
+                                    .build();
+                            
+                        }
+                    
+                        @Bean("yydsQueue")
+                        public Queue queue(){
+                            return QueueBuilder.nonDurable("yyds").build();
+                        }
+                    
+                        @Bean("binding")
+                        public Binding binding(@Qualifier("headerExchange") HeadersExchange exchange, // 这里和上面一样的类型
+                                                @Qualifier("yydsQueue") Queue queue){
+                            
+                            return BindingBuilder
+                                    .bind(queue)
+                                    .to(exchange) // 使用HeadersExchange的to方法 可以进行进一步配置
+                                    // .whereAny("a", "b").exist(); 这个是只要存在任意一个指定的头部Key就行
+                                    // .whereAll("a", "b").exist(); 这个是必须存在所有指定的的头部Key
+                                    .where("test").matches("hello"); // 比如我们现在需要消息的头部信息中包含test 并且值为hello才能转发给我们的消息队列
+                                    // .whereAny(Collections.singletonMap("test", "hello")).match(); 传入Map也行 批量指定键值对
+                            
+                        }
+                    }
+```
+
+现在我们来启动一下试试看:
+
+<img src="https://image.itbaima.net/markdown/2023/03/08/NApBodythmfjzMV.jpg"/>
+
+结果发现 消息可以成功发送到消息队列 这就是使用头部信息进行路由
+
+这样 我们就介绍完了所有五种类型的交换机

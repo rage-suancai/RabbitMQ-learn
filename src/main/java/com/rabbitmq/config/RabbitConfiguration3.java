@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 
 @Configuration
-public class RabbitConfiguration3 {
+public class RabbitConfiguration3 { // SpringBoot连接测试(工作队列)
 
     @Resource
     private CachingConnectionFactory connectionFactory;

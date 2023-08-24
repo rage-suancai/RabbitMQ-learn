@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitConfiguration4 {
+public class RabbitConfiguration4 { // SpringBoot连接测试(发布订阅)
 
     @Bean("fanoutExchange")
     public Exchange exchange() {

@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitConfiguration2 {
+public class RabbitConfiguration2 { // SpringBoot连接测试(死信队列)
 
     @Bean("directDlExchange")
     public Exchange dlExchange() {

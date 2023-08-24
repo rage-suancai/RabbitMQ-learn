@@ -1,4 +1,4 @@
-package com.rabbitmq.config;
+/*package com.rabbitmq.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class RabbitConfiguration5 {
+public class RabbitConfiguration5 { // SpringBoot连接测试(路由模式)
 
     @Bean("directExchange")
     public Exchange exchange() {
@@ -41,4 +41,4 @@ public class RabbitConfiguration5 {
 
     }
 
-}
+}*/
